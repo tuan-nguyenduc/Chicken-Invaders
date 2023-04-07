@@ -4,6 +4,7 @@
 #include "SDL_Utils.h"
 #include "BaseObject.h"
 #include "Spaceship.h"
+#include "ChickenObject.h"
 
 BaseObject g_background;
 
@@ -51,7 +52,7 @@ bool Init()
 
 bool LoadBackground()
 {
-	bool ret = g_background.LoadImg("img//bkground.png", g_screen);
+	bool ret = g_background.LoadImg("img//bkground1.png", g_screen);
 	if (ret == false)
 	{
 		return false;
@@ -116,8 +117,23 @@ int main(int argc, char* argv[])
 		Mix_PlayMusic(gMusic, -1);
 	}
 
-	Spaceship spaceship;
-	spaceship.LoadImg("img//spacecraft.png", g_screen);
+	//Init spaceship
+	Spaceship* spaceship = new Spaceship();
+	spaceship->LoadImg("img//spacecraft.png", g_screen);
+	
+	//Init chicken
+	ChickenObject* chicken = new ChickenObject();
+	chicken->LoadImg("img//chicken.png", g_screen);
+	chicken->set_clips();
+	chicken->SetRect(SCREEN_WIDTH * 0.5, SCREEN_HEIGHT);
+	chicken->set_y_val_(CHICKEN_SPEED);
+
+	//Init chicken egg
+	BulletObject* p_bullet = new BulletObject();
+	chicken->InitBullet(p_bullet, g_screen);
+
+
+
 
 	bool is_quit = false;
 
@@ -129,15 +145,18 @@ int main(int argc, char* argv[])
 			{
 				is_quit = true;
 			}
-			spaceship.HandleInputAction(g_event, g_screen);
+			spaceship->HandleInputAction(g_event, g_screen);
 		};
 		SDL_SetRenderDrawColor(g_screen, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR);
 		SDL_RenderClear(g_screen);
 
 		g_background.Render(g_screen, NULL);
-		spaceship.HandleBullet(g_screen);
-		spaceship.Show(g_screen);
-		spaceship.Move();
+		spaceship->HandleBullet(g_screen);
+		spaceship->Show(g_screen);
+		spaceship->Move();
+		chicken->Show(g_screen);
+		chicken->Move(SCREEN_WIDTH, SCREEN_HEIGHT);
+		chicken->HandleBullet(g_screen);
 		SDL_RenderPresent(g_screen);
 	}
 

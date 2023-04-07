@@ -19,7 +19,7 @@ public:
 	bool get_is_move() { return is_move_; }
 
 	void HandleMove(const int& x_border, const int& y_border);
-
+	void HandleMoveEgg(const int& x_border, const int& y_border);
 
 private:
 	int x_val_;

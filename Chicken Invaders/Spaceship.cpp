@@ -62,7 +62,7 @@ void Spaceship::HandleInputAction(SDL_Event events, SDL_Renderer* screen)
 			p_bullet_list_.push_back(p_bullet);
 		}
 		break;
-		}	
+		}
 	}
 
 	else if (events.type == SDL_KEYUP)
@@ -95,7 +95,7 @@ void Spaceship::HandleInputAction(SDL_Event events, SDL_Renderer* screen)
 		}
 	}
 
-	
+
 }
 
 void Spaceship::HandleBullet(SDL_Renderer* des)
@@ -119,7 +119,7 @@ void Spaceship::HandleBullet(SDL_Renderer* des)
 		}
 	}
 
-	
+
 }
 
 void Spaceship::Move()
@@ -129,7 +129,7 @@ void Spaceship::Move()
 	{
 		rect_.x -= x_val_;
 	}
-	
+
 	rect_.y += y_val_;
 	if (rect_.y < 0 || rect_.y + SHIP_HEIGHT > SCREEN_HEIGHT)
 	{
