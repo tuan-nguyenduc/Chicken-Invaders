@@ -22,7 +22,7 @@ void BulletObject::HandleMove(const int& x_border, const int& y_border)
 			is_move_ = false;
 		}
 	}
-	
+
 }
 
 void BulletObject::HandleMoveEgg(const int& x_border, const int& y_border)

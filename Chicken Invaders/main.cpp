@@ -120,17 +120,30 @@ int main(int argc, char* argv[])
 	//Init spaceship
 	Spaceship* spaceship = new Spaceship();
 	spaceship->LoadImg("img//spacecraft.png", g_screen);
-	
-	//Init chicken
-	ChickenObject* chicken = new ChickenObject();
-	chicken->LoadImg("img//chicken.png", g_screen);
-	chicken->set_clips();
-	chicken->SetRect(SCREEN_WIDTH * 0.5, SCREEN_HEIGHT);
-	chicken->set_y_val_(CHICKEN_SPEED);
 
-	//Init chicken egg
-	BulletObject* p_bullet = new BulletObject();
-	chicken->InitBullet(p_bullet, g_screen);
+	//Init chickens
+	ChickenObject* chickens = new ChickenObject[CHICKEN_NUM];
+
+	for (int t = 0; t < CHICKEN_NUM; t++)
+	{
+		ChickenObject* chicken = (chickens + t);
+		if (chickens != NULL)
+		{
+			chicken->LoadImg("img//chicken.png", g_screen);
+			chicken->set_clips();
+			int rand_x = rand() % 1150;
+			if (rand_x < 50) {
+				rand_x = SCREEN_HEIGHT * 0.3;
+			}
+			chicken->SetRect(rand_x, SCREEN_HEIGHT - t * 400);
+			chicken->set_y_val_(CHICKEN_SPEED);
+			//Init chicken egg
+			BulletObject* p_bullet = new BulletObject();
+			chicken->InitBullet(p_bullet, g_screen);
+		}
+	}
+
+
 
 
 
@@ -154,9 +167,19 @@ int main(int argc, char* argv[])
 		spaceship->HandleBullet(g_screen);
 		spaceship->Show(g_screen);
 		spaceship->Move();
-		chicken->Show(g_screen);
-		chicken->Move(SCREEN_WIDTH, SCREEN_HEIGHT);
-		chicken->HandleBullet(g_screen);
+
+		for (int tt = 0; tt < CHICKEN_NUM; tt++)
+		{
+			ChickenObject* chicken = (chickens + tt);
+			if (chicken != NULL)
+			{
+				chicken->Show(g_screen);
+				chicken->Move(SCREEN_WIDTH, SCREEN_HEIGHT);
+				chicken->HandleBullet(g_screen);
+			}
+			
+		}
+		
 		SDL_RenderPresent(g_screen);
 	}
 

@@ -13,7 +13,7 @@ static SDL_Renderer* g_screen = NULL;
 static SDL_Event g_event;
 static Mix_Music* gMusic = NULL;
 
-
+const int CHICKEN_NUM = 20;
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 760;
 const int SCREEN_BPP = 32;
