@@ -5,6 +5,9 @@
 #include "BaseObject.h"
 #include "Spaceship.h"
 #include "ChickenObject.h"
+#include "BulletObject.h"
+#include <vector>
+
 
 BaseObject g_background;
 
@@ -135,14 +138,13 @@ int main(int argc, char* argv[])
 			if (rand_x < 50) {
 				rand_x = SCREEN_HEIGHT * 0.3;
 			}
-			chicken->SetRect(rand_x, SCREEN_HEIGHT - t * 400);
+			chicken->SetRect(rand_x, SCREEN_HEIGHT -  t * 400);
 			chicken->set_y_val_(CHICKEN_SPEED);
 			//Init chicken egg
 			BulletObject* p_bullet = new BulletObject();
 			chicken->InitBullet(p_bullet, g_screen);
 		}
 	}
-
 
 
 
@@ -164,21 +166,59 @@ int main(int argc, char* argv[])
 		SDL_RenderClear(g_screen);
 
 		g_background.Render(g_screen, NULL);
-		spaceship->HandleBullet(g_screen);
-		spaceship->Show(g_screen);
 		spaceship->Move();
+		spaceship->Show(g_screen);
+		spaceship->HandleBullet(g_screen);
+		
 
 		for (int tt = 0; tt < CHICKEN_NUM; tt++)
 		{
 			ChickenObject* chicken = (chickens + tt);
 			if (chicken != NULL)
 			{
-				chicken->Show(g_screen);
 				chicken->Move(SCREEN_WIDTH, SCREEN_HEIGHT);
+				chicken->Show(g_screen);
 				chicken->HandleBullet(g_screen);
+
 			}
-			
 		}
+
+		// Handle Collision
+		std::vector<BulletObject*> bullet_list = spaceship->get_bullet_list();
+		for (int r = 0; r < bullet_list.size(); ++r)
+		{
+			BulletObject* bullet = bullet_list.at(r);
+			if (bullet != NULL)
+			{
+				for (int t = 0; t < CHICKEN_NUM;++t)
+				{
+					ChickenObject* chicken = (chickens + t);
+					if (chicken != NULL)
+					{
+						// Handle Collision of bullet and chickens
+						SDL_Rect cRect;
+						cRect.x = chicken->GetRect().x;
+						cRect.y = chicken->GetRect().y;
+						cRect.w = CHICKEN_WIDTH;
+						cRect.h = CHICKEN_HEIGHT;
+
+						SDL_Rect bRect = bullet->GetRect();
+
+						bool bCol = SDL_Utils::isCollision(bRect, cRect);
+
+						if (bCol)
+						{
+							spaceship->RemoveBullet(r);
+							chicken->Reset(SCREEN_HEIGHT + t * 400);
+						}
+
+
+
+					}
+				}
+			}
+		}
+
 		
 		SDL_RenderPresent(g_screen);
 	}

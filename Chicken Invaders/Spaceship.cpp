@@ -122,6 +122,22 @@ void Spaceship::HandleBullet(SDL_Renderer* des)
 
 }
 
+void Spaceship::RemoveBullet(const int& index)
+{
+	int size = p_bullet_list_.size();
+	if (size > 0 && index < size)
+	{
+		BulletObject* p_bullet = p_bullet_list_.at(index);
+		p_bullet_list_.erase(p_bullet_list_.begin() + index);
+
+		if (p_bullet)
+		{
+			delete p_bullet;
+			p_bullet = NULL;
+		}
+	}
+}
+
 void Spaceship::Move()
 {
 	rect_.x += x_val_;

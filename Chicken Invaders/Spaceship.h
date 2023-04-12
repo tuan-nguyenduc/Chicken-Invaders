@@ -28,6 +28,7 @@ public:
 	}
 
 	void HandleBullet(SDL_Renderer* des);
+	void RemoveBullet(const int& index);
 private:
 	std::vector<BulletObject*> p_bullet_list_;
 

@@ -31,6 +31,8 @@ public:
 	std::vector<BulletObject*> getBulletList() const { return p_bullet_list_; }
 	void InitBullet(BulletObject* p_bullet, SDL_Renderer* des);
 	void HandleBullet(SDL_Renderer* des);
+	void Reset(const int& y_border);
+	void ResetBullet(BulletObject* p_bullet);
 
 private:
 	int x_val_;

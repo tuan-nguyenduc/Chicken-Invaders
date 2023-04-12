@@ -87,3 +87,32 @@ void ChickenObject::HandleBullet(SDL_Renderer* des)
 		}
 	}
 }
+
+void ChickenObject::Reset(const int& y_border)
+{
+	rect_.y = y_border;
+	rect_.y += y_val_;
+	if (rect_.y > SCREEN_HEIGHT)
+	{
+		rect_.y = 0;
+		int rand_x = rand() % 1150;
+		if (rand_x < 50) {
+			rand_x = SCREEN_HEIGHT * 0.3;
+		}
+		rect_.x = rand_x;
+	}
+
+	for (int i = 0; i < p_bullet_list_.size(); i++)
+	{
+		BulletObject* p_bullet = p_bullet_list_.at(i);
+		if (p_bullet)
+		{
+			ResetBullet(p_bullet);
+		}
+	}
+}
+
+void ChickenObject::ResetBullet(BulletObject* p_bullet)
+{
+	p_bullet->SetRect(this->rect_.x + CHICKEN_WIDTH * 0.35, this->rect_.y + CHICKEN_HEIGHT);
+}
