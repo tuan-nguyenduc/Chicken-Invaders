@@ -8,7 +8,7 @@
 #include <vector>
 
 #define CHICKEN_WIDTH 75
-#define CHICKEN_HEIGHT 68
+#define CHICKEN_HEIGHT 65
 #define CHICKEN_SPEED 2
 #define CHICKEN_BULLET_SPEED 5
 
@@ -33,6 +33,9 @@ public:
 	void HandleBullet(SDL_Renderer* des);
 	void Reset(const int& y_border);
 	void ResetBullet(BulletObject* p_bullet);
+	void RemoveBullet(const int& index);
+	SDL_Rect GetRectFrame();
+
 
 private:
 	int x_val_;

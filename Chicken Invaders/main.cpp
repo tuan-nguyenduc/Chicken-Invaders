@@ -127,9 +127,9 @@ int main(int argc, char* argv[])
 	//Init chickens
 	ChickenObject* chickens = new ChickenObject[CHICKEN_NUM];
 
-	for (int t = 0; t < CHICKEN_NUM; t++)
+	for (int c = 0; c < CHICKEN_NUM; c++)
 	{
-		ChickenObject* chicken = (chickens + t);
+		ChickenObject* chicken = (chickens + c);
 		if (chickens != NULL)
 		{
 			chicken->LoadImg("img//chicken.png", g_screen);
@@ -138,15 +138,13 @@ int main(int argc, char* argv[])
 			if (rand_x < 50) {
 				rand_x = SCREEN_HEIGHT * 0.3;
 			}
-			chicken->SetRect(rand_x, SCREEN_HEIGHT -  t * 400);
+			chicken->SetRect(rand_x, SCREEN_HEIGHT -  c * 400);
 			chicken->set_y_val_(CHICKEN_SPEED);
 			//Init chicken egg
 			BulletObject* p_bullet = new BulletObject();
 			chicken->InitBullet(p_bullet, g_screen);
 		}
 	}
-
-
 
 
 
@@ -171,49 +169,78 @@ int main(int argc, char* argv[])
 		spaceship->HandleBullet(g_screen);
 		
 
-		for (int tt = 0; tt < CHICKEN_NUM; tt++)
+		for (int cc = 0; cc < CHICKEN_NUM; cc++)
 		{
-			ChickenObject* chicken = (chickens + tt);
+			ChickenObject* chicken = (chickens + cc);
 			if (chicken != NULL)
 			{
 				chicken->Move(SCREEN_WIDTH, SCREEN_HEIGHT);
 				chicken->Show(g_screen);
 				chicken->HandleBullet(g_screen);
 
+				// Handle Collision of spaceship and chickens and eggs
+				SDL_Rect sRect = spaceship->GetRect();
+				SDL_Rect cRect = chicken->GetRectFrame();
+
+				// Collision of spaceship and eggs
+				bool sCol1 = false;
+				// Collision of spaceship and chickens
+				bool sCol2 = false;
+
+				std::vector<BulletObject*> eggs_list = chicken->getBulletList();
+				for (int e = 0; e < eggs_list.size(); ++e)
+				{
+					BulletObject* egg = eggs_list.at(e);
+					if (egg != NULL)
+					{
+						sCol1 = SDL_Utils::isCollision(egg->GetRect(), sRect);
+						if (sCol1)
+						{
+							chicken->RemoveBullet(e);
+							break;
+						}
+					}
+				}
+				sCol2 = SDL_Utils::isCollision(sRect, cRect);
+
+				if (sCol1 || sCol2)
+				{
+					if (MessageBox(NULL, L"Game Over!",L"Info", MB_OK || MB_ICONSTOP) == IDOK)
+					{
+						chicken->Free();
+						Close();
+						SDL_Quit();
+						return 0;
+					}
+				}
+
+
 			}
 		}
 
-		// Handle Collision
+		// Handle Collision of bullet and chickens
 		std::vector<BulletObject*> bullet_list = spaceship->get_bullet_list();
-		for (int r = 0; r < bullet_list.size(); ++r)
+		for (int b = 0; b < bullet_list.size(); ++b)
 		{
-			BulletObject* bullet = bullet_list.at(r);
+			BulletObject* bullet = bullet_list.at(b);
 			if (bullet != NULL)
 			{
-				for (int t = 0; t < CHICKEN_NUM;++t)
+				for (int c = 0; c < CHICKEN_NUM;++c)
 				{
-					ChickenObject* chicken = (chickens + t);
+					ChickenObject* chicken = (chickens + c);
 					if (chicken != NULL)
 					{
-						// Handle Collision of bullet and chickens
-						SDL_Rect cRect;
-						cRect.x = chicken->GetRect().x;
-						cRect.y = chicken->GetRect().y;
-						cRect.w = CHICKEN_WIDTH;
-						cRect.h = CHICKEN_HEIGHT;
-
+						
+						SDL_Rect cRect = chicken->GetRectFrame();
 						SDL_Rect bRect = bullet->GetRect();
 
 						bool bCol = SDL_Utils::isCollision(bRect, cRect);
 
 						if (bCol)
 						{
-							spaceship->RemoveBullet(r);
-							chicken->Reset(SCREEN_HEIGHT + t * 400);
+							spaceship->RemoveBullet(b);
+							chicken->Reset(SCREEN_HEIGHT + c * 400);
 						}
-
-
-
 					}
 				}
 			}

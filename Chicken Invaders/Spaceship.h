@@ -6,8 +6,8 @@
 #include "BaseObject.h"
 #include "BulletObject.h"
 #define SHIP_SPEED 10
-#define SHIP_HEIGHT 70
-#define SHIP_WIDTH 57
+#define SHIP_HEIGHT 65
+#define SHIP_WIDTH 55
 
 class Spaceship : public BaseObject
 {

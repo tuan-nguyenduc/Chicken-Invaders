@@ -116,3 +116,30 @@ void ChickenObject::ResetBullet(BulletObject* p_bullet)
 {
 	p_bullet->SetRect(this->rect_.x + CHICKEN_WIDTH * 0.35, this->rect_.y + CHICKEN_HEIGHT);
 }
+
+SDL_Rect ChickenObject::GetRectFrame()
+{
+	SDL_Rect cRect;
+	cRect.x = rect_.x;
+	cRect.y = rect_.y;
+	cRect.w = CHICKEN_WIDTH;
+	cRect.h = CHICKEN_HEIGHT;
+	return cRect;
+}
+
+void ChickenObject::RemoveBullet(const int& index)
+{
+
+	int size = p_bullet_list_.size();
+	if (size > 0 && index < size)
+	{
+		BulletObject* p_bullet = p_bullet_list_.at(index);
+		p_bullet_list_.erase(p_bullet_list_.begin() + index);
+
+		if (p_bullet)
+		{
+			delete p_bullet;
+			p_bullet = NULL;
+		}
+	}
+}

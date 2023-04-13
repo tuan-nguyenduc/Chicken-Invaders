@@ -78,7 +78,7 @@ bool SDL_Utils::isCollision(const SDL_Rect& object1, const SDL_Rect& object2)
         }
     }
 
-    //object1 =object2
+    //object1 = object2
     if (top_a == top_b && right_a == right_b && bottom_a == bottom_b)
     {
         return true;
