@@ -6,6 +6,7 @@
 #include "Spaceship.h"
 #include "ChickenObject.h"
 #include "BulletObject.h"
+#include "ExplosionObject.h"
 #include <vector>
 
 
@@ -146,6 +147,14 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	//Init Explosion of chicken
+	ExplosionObject* explosion_chicken = new ExplosionObject();
+	bool ret = explosion_chicken->LoadImg("img//explosion.png", g_screen);
+	if (!ret)
+	{
+		return -1;
+	}
+	explosion_chicken->set_clips();
 
 
 	bool is_quit = false;
@@ -204,8 +213,8 @@ int main(int argc, char* argv[])
 				sCol2 = SDL_Utils::isCollision(sRect, cRect);
 
 				if (sCol1 || sCol2)
-				{
-					if (MessageBox(NULL, L"Game Over!",L"Info", MB_OK || MB_ICONSTOP) == IDOK)
+				{					
+					if (MessageBox(NULL, L"Game Over!", L"Info", MB_OK || MB_ICONSTOP) == IDOK)
 					{
 						chicken->Free();
 						Close();
@@ -217,6 +226,7 @@ int main(int argc, char* argv[])
 
 			}
 		}
+
 
 		// Handle Collision of bullet and chickens
 		std::vector<BulletObject*> bullet_list = spaceship->get_bullet_list();
@@ -238,6 +248,14 @@ int main(int argc, char* argv[])
 
 						if (bCol)
 						{
+							for (int ex = 0; ex < EXPLOSION_FRAME_NUM; ++ex)
+							{
+								int x_pos = bullet->GetRect().x - EXPLOSION_WIDTH_FRAME * 0.5;
+								int y_pos = bullet->GetRect().y - EXPLOSION_HEIGHT_FRAME * 0.5;
+								explosion_chicken->set_frame(ex);
+								explosion_chicken->SetRect(x_pos, y_pos);
+								explosion_chicken->Show(g_screen);
+							}
 							spaceship->RemoveBullet(b);
 							chicken->Reset(SCREEN_HEIGHT + c * 400);
 						}

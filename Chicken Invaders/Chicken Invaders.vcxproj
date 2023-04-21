@@ -136,6 +136,7 @@
     <ClCompile Include="BulletObject.cpp" />
     <ClCompile Include="BulletObject.h" />
     <ClCompile Include="ChickenObject.cpp" />
+    <ClCompile Include="ExplosionObject.cpp" />
     <ClCompile Include="SDL_Utils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Spaceship.cpp" />
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="ChickenObject.h" />
+    <ClInclude Include="ExplosionObject.h" />
     <ClInclude Include="SDL_Utils.h" />
     <ClInclude Include="Spaceship.h" />
   </ItemGroup>
