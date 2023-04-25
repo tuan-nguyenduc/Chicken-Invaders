@@ -8,10 +8,11 @@
 #include "BulletObject.h"
 #include "ExplosionObject.h"
 #include <vector>
+#include "TextObject.h"
 
 
 BaseObject g_background;
-
+TTF_Font* g_font;
 bool Init()
 {
 	bool success = true;
@@ -49,6 +50,18 @@ bool Init()
 				printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 				success = false;
 			}
+			if (TTF_Init() == -1)
+			{
+				success = false;
+			}
+			
+			g_font = TTF_OpenFont("font//ropa_sans.ttf", 25);
+			if (g_font == NULL)
+			{
+				success = false;
+			}
+			
+			
 		}
 	}
 	return success;
@@ -149,15 +162,38 @@ int main(int argc, char* argv[])
 
 	//Init Explosion of chicken
 	ExplosionObject* explosion_chicken = new ExplosionObject();
-	bool ret = explosion_chicken->LoadImg("img//explosion.png", g_screen);
-	if (!ret)
+	bool ret1 = explosion_chicken->LoadImg("img//explosion.png", g_screen);
+	if (!ret1)
 	{
 		return -1;
 	}
 	explosion_chicken->set_clips();
 
+	//Init Explosion of spaceship
+	ExplosionObject* explosion_spaceship = new ExplosionObject();
+	bool ret2 = explosion_spaceship->LoadImg("img//explosion.png", g_screen);
+	if (!ret2)
+	{
+		return -1;
+	}
+	explosion_spaceship->set_clips();
 
+	//Init some useful variable
 	bool is_quit = false;
+	int die_times = 0;
+	int point_value = 0;
+	//Played Time text object
+	TextObject* time_game = new TextObject();
+	time_game->setColor(TextObject::WHITE_TEXT);
+
+	//Player Point text object
+	TextObject* point_game = new TextObject();
+	point_game->setColor(TextObject::YELLOW_TEXT);
+
+	//Player life text object
+	TextObject* life_game = new TextObject();
+	life_game->setColor(TextObject::WHITE_TEXT);
+
 
 	while (!is_quit)
 	{
@@ -212,15 +248,36 @@ int main(int argc, char* argv[])
 				}
 				sCol2 = SDL_Utils::isCollision(sRect, cRect);
 
+
 				if (sCol1 || sCol2)
-				{					
-					if (MessageBox(NULL, L"Game Over!", L"Info", MB_OK || MB_ICONSTOP) == IDOK)
+				{
+					for (int ex = 0; ex < EXPLOSION_FRAME_NUM; ++ex)
 					{
-						chicken->Free();
-						Close();
-						SDL_Quit();
-						return 0;
+						int x_pos = spaceship->GetRect().x - EXPLOSION_WIDTH_FRAME * 0.5;
+						int y_pos = spaceship->GetRect().y - EXPLOSION_HEIGHT_FRAME * 0.5;
+						explosion_spaceship->set_frame(ex);
+						explosion_spaceship->SetRect(x_pos, y_pos);
+						explosion_spaceship->Show(g_screen);
 					}
+					die_times++;
+					if (die_times <= 3)
+					{
+						spaceship->SetRect(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 200);
+						SDL_Delay(1000);
+						continue;
+
+					}
+					else
+					{
+						if (MessageBox(NULL, L"Game Over!", L"Info", MB_OK || MB_ICONSTOP) == IDOK)
+						{
+							chicken->Free();
+							Close();
+							SDL_Quit();
+							return 0;
+						}
+					}
+					
 				}
 
 
@@ -248,6 +305,7 @@ int main(int argc, char* argv[])
 
 						if (bCol)
 						{
+							point_value += 100;
 							for (int ex = 0; ex < EXPLOSION_FRAME_NUM; ++ex)
 							{
 								int x_pos = bullet->GetRect().x - EXPLOSION_WIDTH_FRAME * 0.5;
@@ -264,7 +322,35 @@ int main(int argc, char* argv[])
 			}
 		}
 
+		//Show game time text
+		std::string str_time = "Played Time: ";
+		Uint32 time_val = SDL_GetTicks() / 1000;
+		std::string str_val = std::to_string(time_val);
+		str_time += str_val;
+		time_game->setText(str_time);
+		time_game->LoadFromRenderText(g_font, g_screen);
+		time_game->RenderText(g_screen, SCREEN_WIDTH -200, 20);
+
+		//Show spaceship life text
+		std::string str_life = "Life: ";
+		int life_value = 3 - die_times;
+		std::string str_life_value = std::to_string(life_value);
+		str_life += str_life_value;
+		life_game->setText(str_life);
+		life_game->LoadFromRenderText(g_font, g_screen);
+		life_game->RenderText(g_screen, SCREEN_WIDTH - 1180, 20);
+
+		//Show game point text
+		std::string str_point = "Point: ";
+		std::string str_point_value = std::to_string(point_value);
+		str_point += str_point_value;
+		point_game->setText(str_point);
+		point_game->LoadFromRenderText(g_font, g_screen);
+		point_game->RenderText(g_screen, SCREEN_WIDTH - 1180, 45);
+
 		
+
+
 		SDL_RenderPresent(g_screen);
 	}
 
