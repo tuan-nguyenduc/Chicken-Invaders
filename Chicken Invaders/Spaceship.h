@@ -16,7 +16,7 @@ public:
 	~Spaceship();
 
 	void Show(SDL_Renderer* des);
-	void HandleInputAction(SDL_Event events, SDL_Renderer* screen);
+	void HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_Chunk* bullet_sound);
 	void Move();
 	void set_bullet_list(std::vector<BulletObject*> bullet_list)
 	{

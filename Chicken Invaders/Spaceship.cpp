@@ -22,7 +22,7 @@ void Spaceship::Show(SDL_Renderer* des)
 }
 
 
-void Spaceship::HandleInputAction(SDL_Event events, SDL_Renderer* screen)
+void Spaceship::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_Chunk* bullet_sound)
 {
 	if (events.type == SDL_KEYDOWN && events.key.repeat == 0)
 	{
@@ -58,8 +58,8 @@ void Spaceship::HandleInputAction(SDL_Event events, SDL_Renderer* screen)
 			p_bullet->SetRect(this->rect_.x + SHIP_WIDTH * 0.5, rect_.y - SHIP_HEIGHT + 30);
 			p_bullet->set_y_val(10);
 			p_bullet->set_is_move(true);
-
 			p_bullet_list_.push_back(p_bullet);
+			Mix_PlayChannel(-1, bullet_sound, 0);
 		}
 		break;
 		}

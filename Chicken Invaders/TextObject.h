@@ -35,11 +35,14 @@ public:
 		str_val_ = text;
 	}
 	std::string getText() const { return str_val_; }
+	void SetRect(const int& x, const int& y) { rect_.x = x, rect_.y = y; }
+	SDL_Rect GetRect() const { return rect_; }
 
 private:
 	std::string str_val_;
 	SDL_Color text_color_;
 	SDL_Texture* texture_;
+	SDL_Rect rect_;
 	int width_;
 	int height_;
 

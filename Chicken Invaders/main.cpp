@@ -13,6 +13,7 @@
 
 BaseObject g_background;
 TTF_Font* g_font;
+
 bool Init()
 {
 	bool success = true;
@@ -50,6 +51,16 @@ bool Init()
 				printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 				success = false;
 			}
+			//Read file wav audio
+			g_sound_bullet = Mix_LoadWAV("sound//sound_bullet.wav");
+			g_sound_explosion = Mix_LoadWAV("sound//sound_explosion.wav");
+			g_sound_chicken = Mix_LoadWAV("sound//sound_chicken.wav");
+
+			if (g_sound_bullet == NULL || g_sound_explosion == NULL || g_sound_chicken == NULL)
+			{
+				success = false;
+			}
+
 			if (TTF_Init() == -1)
 			{
 				success = false;
@@ -60,6 +71,7 @@ bool Init()
 			{
 				success = false;
 			}
+
 			
 			
 		}
@@ -194,6 +206,7 @@ int main(int argc, char* argv[])
 	TextObject* life_game = new TextObject();
 	life_game->setColor(TextObject::WHITE_TEXT);
 
+	SDL_Utils::ShowMenu(g_screen, g_font);
 
 	while (!is_quit)
 	{
@@ -203,7 +216,7 @@ int main(int argc, char* argv[])
 			{
 				is_quit = true;
 			}
-			spaceship->HandleInputAction(g_event, g_screen);
+			spaceship->HandleInputAction(g_event, g_screen, g_sound_bullet);
 		};
 		SDL_SetRenderDrawColor(g_screen, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR);
 		SDL_RenderClear(g_screen);
@@ -251,6 +264,7 @@ int main(int argc, char* argv[])
 
 				if (sCol1 || sCol2)
 				{
+					Mix_PlayChannel(-1, g_sound_explosion, 0);
 					for (int ex = 0; ex < EXPLOSION_FRAME_NUM; ++ex)
 					{
 						int x_pos = spaceship->GetRect().x - EXPLOSION_WIDTH_FRAME * 0.5;
@@ -259,6 +273,7 @@ int main(int argc, char* argv[])
 						explosion_spaceship->SetRect(x_pos, y_pos);
 						explosion_spaceship->Show(g_screen);
 					}
+					
 					die_times++;
 					if (die_times <= 3)
 					{
@@ -305,6 +320,7 @@ int main(int argc, char* argv[])
 
 						if (bCol)
 						{
+							Mix_PlayChannel(-1, g_sound_chicken, 0);
 							point_value += 100;
 							for (int ex = 0; ex < EXPLOSION_FRAME_NUM; ++ex)
 							{

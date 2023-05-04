@@ -1,4 +1,6 @@
 #include "SDL_Utils.h"
+#include "BaseObject.h"
+#include "TextObject.h";
 
 bool SDL_Utils::isCollision(const SDL_Rect& object1, const SDL_Rect& object2)
 {
@@ -85,4 +87,61 @@ bool SDL_Utils::isCollision(const SDL_Rect& object1, const SDL_Rect& object2)
     }
 
     return false;
+}
+
+SDL_Texture* SDL_Utils::LoadImg(std::string path, SDL_Renderer* screen)
+{
+    SDL_Texture* new_texture = NULL;
+
+    SDL_Surface* load_surface = IMG_Load(path.c_str());
+
+    if (load_surface != NULL)
+    {
+        SDL_SetColorKey(load_surface, SDL_TRUE, SDL_MapRGB(load_surface->format, COLOR_KEY_R, COLOR_KEY_G, COLOR_KEY_B));
+    }
+    new_texture = SDL_CreateTextureFromSurface(screen, load_surface);
+    SDL_FreeSurface(load_surface);
+
+    return new_texture;
+    
+}
+
+
+int SDL_Utils::ShowMenu(SDL_Renderer* des, TTF_Font* font)
+{
+    g_menu = LoadImg("img//img_menu.png", des);
+    if (g_menu == NULL)
+    {
+        return 1;
+    }
+
+    const int menuItemNum = 2;
+    SDL_Rect pos_arr[menuItemNum];
+    pos_arr[0].x = 200;
+    pos_arr[0].y = 400;
+
+    pos_arr[1].x = 200;
+    pos_arr[1].y = 500;
+
+    TextObject text_menu[menuItemNum];
+    text_menu[0].setText("Play Game");
+    text_menu[0].setColor(TextObject::BLACK_TEXT);
+    text_menu[0].SetRect(pos_arr[0].x, pos_arr[0].y);
+
+    text_menu[1].setText("Exit");
+    text_menu[1].setColor(TextObject::BLACK_TEXT);
+    text_menu[1].SetRect(pos_arr[1].x, pos_arr[1].y);
+
+
+    while (true)
+    {
+        SDL_RenderCopy(des, g_menu, NULL, NULL);
+        for (int i = 0; i < menuItemNum; ++i)
+        {
+            text_menu[i].LoadFromRenderText(font, des);
+            text_menu[i].RenderText(des, text_menu[i].GetRect().x, text_menu[i].GetRect().y);
+        }
+        SDL_RenderPresent(des);
+    }
+    
 }
