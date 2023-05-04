@@ -33,6 +33,7 @@ namespace SDL_Utils
 {
 	bool isCollision(const SDL_Rect& object1, const SDL_Rect& object2);
 	SDL_Texture* LoadImg(std::string path, SDL_Renderer* screen);
+	bool CheckFocusWithRect(int x, int y, const SDL_Rect& rect);
 	int ShowMenu(SDL_Renderer* des, TTF_Font* font);
 }
 

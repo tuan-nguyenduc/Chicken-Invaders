@@ -106,6 +106,15 @@ SDL_Texture* SDL_Utils::LoadImg(std::string path, SDL_Renderer* screen)
     
 }
 
+bool SDL_Utils::CheckFocusWithRect(int x, int y, const SDL_Rect& rect)
+{
+    if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h)
+    {
+        return true;
+    }
+    return false;
+}
+
 
 int SDL_Utils::ShowMenu(SDL_Renderer* des, TTF_Font* font)
 {
@@ -117,21 +126,27 @@ int SDL_Utils::ShowMenu(SDL_Renderer* des, TTF_Font* font)
 
     const int menuItemNum = 2;
     SDL_Rect pos_arr[menuItemNum];
-    pos_arr[0].x = 200;
-    pos_arr[0].y = 400;
+    pos_arr[0].x = 700;
+    pos_arr[0].y = 550;
 
-    pos_arr[1].x = 200;
-    pos_arr[1].y = 500;
+    pos_arr[1].x = 700;
+    pos_arr[1].y = 650;
 
     TextObject text_menu[menuItemNum];
     text_menu[0].setText("Play Game");
-    text_menu[0].setColor(TextObject::BLACK_TEXT);
+    text_menu[0].setColor(TextObject::WHITE_TEXT);
     text_menu[0].SetRect(pos_arr[0].x, pos_arr[0].y);
 
     text_menu[1].setText("Exit");
-    text_menu[1].setColor(TextObject::BLACK_TEXT);
+    text_menu[1].setColor(TextObject::WHITE_TEXT);
     text_menu[1].SetRect(pos_arr[1].x, pos_arr[1].y);
 
+    bool selected[menuItemNum] = { 0, 0 };
+    int xm = 0;
+    int ym = 0;
+
+    SDL_Event mouse_event;
+    SDL_Rect text_rect[menuItemNum];
 
     while (true)
     {
@@ -139,7 +154,70 @@ int SDL_Utils::ShowMenu(SDL_Renderer* des, TTF_Font* font)
         for (int i = 0; i < menuItemNum; ++i)
         {
             text_menu[i].LoadFromRenderText(font, des);
-            text_menu[i].RenderText(des, text_menu[i].GetRect().x, text_menu[i].GetRect().y);
+            text_rect[i] = text_menu[i].GetRectAfterRenderText(des, text_menu[i].GetRect().x, text_menu[i].GetRect().y);
+        }
+
+        while (SDL_PollEvent(&mouse_event))
+        {
+            switch (mouse_event.type)
+            {
+            case SDL_QUIT:
+            {
+                return 1;
+            }
+
+            break;
+            case SDL_MOUSEMOTION:
+            {
+                xm = mouse_event.motion.x;
+                ym = mouse_event.motion.y;
+
+                for (int i = 0; i < menuItemNum; i++)
+                {
+                    if (CheckFocusWithRect(xm, ym, text_rect[i]))
+                    {
+                        if (selected[i] == false)
+                        {
+                            selected[i] = 1;
+                            text_menu[i].setColor(TextObject::RED_TEXT);
+                        }
+                    }
+                    else
+                    {
+                        if (selected[i] == true)
+                        {
+                            selected[i] = 0;
+                            text_menu[i].setColor(TextObject::WHITE_TEXT);
+                        }
+                    }
+
+
+                }
+            }
+            break;
+            case SDL_MOUSEBUTTONDOWN:
+            {
+                xm = mouse_event.button.x;
+                ym = mouse_event.button.y;
+                for (int i = 0; i < menuItemNum; i++)
+                {
+                    if (CheckFocusWithRect(xm, ym, text_rect[i]))
+                    {
+                        return i;
+                    }
+                }
+            }
+            break;
+            case SDL_KEYDOWN:
+            {
+                if (mouse_event.key.keysym.sym == SDLK_ESCAPE)
+                {
+                    return 1;
+                }
+            }
+            default:
+                break;
+            }
         }
         SDL_RenderPresent(des);
     }

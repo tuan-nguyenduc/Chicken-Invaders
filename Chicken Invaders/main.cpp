@@ -11,8 +11,10 @@
 #include "TextObject.h"
 
 
+
 BaseObject g_background;
 TTF_Font* g_font;
+TTF_Font* font_menu;
 
 bool Init()
 {
@@ -21,7 +23,7 @@ bool Init()
 	if (ret < 0)
 	{
 		return false;
-	}
+	} 
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
@@ -67,7 +69,8 @@ bool Init()
 			}
 			
 			g_font = TTF_OpenFont("font//ropa_sans.ttf", 25);
-			if (g_font == NULL)
+			font_menu = TTF_OpenFont("font//ropa_sans.ttf", 80);
+			if (g_font == NULL || font_menu == NULL)
 			{
 				success = false;
 			}
@@ -206,7 +209,11 @@ int main(int argc, char* argv[])
 	TextObject* life_game = new TextObject();
 	life_game->setColor(TextObject::WHITE_TEXT);
 
-	SDL_Utils::ShowMenu(g_screen, g_font);
+	int ret_menu = SDL_Utils::ShowMenu(g_screen, font_menu);
+	if (ret_menu == 1)
+	{
+		is_quit = true;
+	}
 
 	while (!is_quit)
 	{

@@ -84,3 +84,21 @@ void TextObject::RenderText(SDL_Renderer* screen,
 
 	SDL_RenderCopyEx(screen, texture_, clip, &renderQuad, angle, center, flip);
 }
+
+SDL_Rect TextObject::GetRectAfterRenderText(SDL_Renderer* screen,
+	int xp, int yp,
+	SDL_Rect* clip,
+	double angle,
+	SDL_Point* center,
+	SDL_RendererFlip flip)
+{
+	SDL_Rect renderQuad = { xp, yp, width_, height_ };
+	if (clip != NULL)
+	{
+		renderQuad.x = clip->w;
+		renderQuad.h = clip->h;
+	}
+
+	SDL_RenderCopyEx(screen, texture_, clip, &renderQuad, angle, center, flip);
+	return renderQuad;
+}
